@@ -6,7 +6,7 @@ This project solves traveling salesman problem using following algorithms:
 * simulated annealing
 * genetic algorithm
 <br />
-There are files with data, for which the answers are known. 
+There are files with data, for which the answers are known. <br /> 
 ## Technologies used
 * C++
 * CMake
