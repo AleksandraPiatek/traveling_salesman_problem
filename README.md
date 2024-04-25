@@ -7,6 +7,6 @@ This project solves traveling salesman problem using following algorithms:
 * genetic algorithm
 <br />
 There are files with data, for which the answers are known. 
-# Technologies used
+## Technologies used
 * C++
 * CMake
