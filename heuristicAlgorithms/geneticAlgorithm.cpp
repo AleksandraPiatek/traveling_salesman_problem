@@ -1,28 +1,17 @@
 #include <ntdef.h>
 #include <profileapi.h>
 #include "geneticAlgorithm.h"
+#include "../tools/timeCounter.h"
 #include <iostream>
 #include <random>
 #include <climits>
 
-long long int read_QPC() {
-    LARGE_INTEGER count;
-    QueryPerformanceCounter(&count);
-    return((long long int)count.QuadPart);
-}
-
-int minCost;
-long long int minCostFoundTime;
-int *tempMinPath;
-int **population;
-int populationSize;
-int *parentsIndexes;
-
 void geneticAlgorithm::geneticAlgorithmExecution(int stopCondition, costMatrix matrix, float crossoverFactor, float mutationFactor, char mutationMethod, std::string fileName) {
     long long int frequency, start;
+    timeCounter timeCounter;
     minCost = INT_MAX;
     QueryPerformanceFrequency((LARGE_INTEGER *)&frequency);
-    start = read_QPC();
+    start = timeCounter.read_QPC();
     tempMinPath = new int[matrix.getSize()];
     tempMinPath[0] = -1;
 
@@ -37,7 +26,7 @@ void geneticAlgorithm::geneticAlgorithmExecution(int stopCondition, costMatrix m
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dist(0, 1);
 
-    while (((read_QPC() - start) / frequency) < stopCondition) {
+    while (((timeCounter.read_QPC() - start) / frequency) < stopCondition) {
         int** newPopulation = new int*[populationSize];
         for(int i = 0; i<populationSize; i++) newPopulation[i] = new int[matrix.getSize()];
         int bestIndex = findBestFromPopulation(matrix);
@@ -47,7 +36,7 @@ void geneticAlgorithm::geneticAlgorithmExecution(int stopCondition, costMatrix m
 
         int index;
         for (index = 1; index <crossoverFactor*populationSize; index++) {
-            //selekcja
+            //selection
             parentsIndexes[0] = -1;
             parentsIndexes[1] = -1;
             selectFromPopulation(0, matrix);
@@ -59,7 +48,7 @@ void geneticAlgorithm::geneticAlgorithmExecution(int stopCondition, costMatrix m
                 newPopulation[index][i] = tempMinPath[i];
             }
         }
-        //dopelnienie newPopulation
+        //filling newPopulation
         for (int j = index; j < populationSize; j++) {
             int pathToAdd = generateRandomInt(1, populationSize - 1);
             for (int i = 0; i < matrix.getSize(); i++) {
@@ -72,11 +61,11 @@ void geneticAlgorithm::geneticAlgorithmExecution(int stopCondition, costMatrix m
         }
         delete[] population;
         population = newPopulation;
-        //mutacja
+        //mutation
         mutate(matrix.getSize(), mutationMethod, mutationFactor);
         if (calculateCost(findBestFromPopulation(matrix), matrix) < minCost) {
             minCost = calculateCost(findBestFromPopulation(matrix), matrix);
-            minCostFoundTime = 1000 * (read_QPC() - start) / frequency;
+            minCostFoundTime = 1000 * (timeCounter.read_QPC() - start) / frequency;
             std::cout << minCost << " " << minCostFoundTime << std::endl;
         }
     }
@@ -109,9 +98,9 @@ void geneticAlgorithm::populationRandomizer(int matrixSize, costMatrix matrix) {
 }
 
 void geneticAlgorithm::selectFromPopulation(int index, costMatrix matrix){
-    //selekcja turniejowa
+    //tournament selection
     int k = 3;
-    int selectedChromosomesIndexes[k];  //losowanie chromosomow
+    int selectedChromosomesIndexes[k];  //random chromosomes
     int randomNumber;
     for(int i = 0; i<k; i++) {
         randomNumber = generateRandomInt(0,populationSize-1);
@@ -121,7 +110,7 @@ void geneticAlgorithm::selectFromPopulation(int index, costMatrix matrix){
         selectedChromosomesIndexes[i]=randomNumber;
     }
 
-    //turniej
+    //tournament
     int minIndex = selectedChromosomesIndexes[0];
     int tempMinPathCost = calculateCost(selectedChromosomesIndexes[0], matrix);
     for(int i = 1; i<k; i++){

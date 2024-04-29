@@ -30,12 +30,9 @@ int* greedyApproach::greedyApproachAlgorithm(int amountOfVertices, costMatrix ma
         currentVertex = minVertex;
         results[i+1]=currentVertex;
         pathCost+=minValue;
-        // std::cout<< currentVertex << " ";
         visitedVertices[minVertex] = true;
     }
-    //results[amountOfVertices];
     results[amountOfVertices] = pathCost;
-    // std:: cout << pathCost << std::endl;
     for(int i=0; i<amountOfVertices+1; i++) std::cout <<results[i] << " ";
 
     return results;

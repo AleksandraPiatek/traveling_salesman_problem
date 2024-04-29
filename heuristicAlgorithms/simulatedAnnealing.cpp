@@ -1,22 +1,14 @@
 #include "simulatedAnnealing.h"
-#include "../algorithms/greedyApproach.h"
+#include "../tools/timeCounter.h"
 #include <windows.h>
 #include <iomanip>
 #include <random>
 
-long long int read_QPC() {
-    LARGE_INTEGER count;
-    QueryPerformanceCounter(&count);
-    return((long long int)count.QuadPart);
-}
-greedyApproach greedyApproach;
-int *minPath;
-int minPathCost;
-double temperature;
 void simulatedAnnealing::simulatedAnnealingAlgorithm(costMatrix matrix, int stopCondition){
+    timeCounter timeCounter;
     long long int frequency, start, elapsed;
     QueryPerformanceFrequency((LARGE_INTEGER *)&frequency);
-    start = read_QPC();
+    start = timeCounter.read_QPC();
     int *temporaryTable;
     temporaryTable = greedyApproach.greedyApproachAlgorithm(matrix.getSize(), matrix);
     minPathCost = temporaryTable[matrix.getSize()];
@@ -26,13 +18,13 @@ void simulatedAnnealing::simulatedAnnealingAlgorithm(costMatrix matrix, int stop
     temperature = 45.0*matrix.getSize();
     float a = 0.99;
 
-    while(((elapsed = (read_QPC()-start)/frequency)<stopCondition) || temperature==0)  {
+    while(((elapsed = (timeCounter.read_QPC()-start)/frequency)<stopCondition) || temperature==0)  {
         //generate random solution
         int randomSolutionCost= INT_MAX;
         int* randomPath = new int[matrix.getSize()];
         for(int i=0; i<matrix.getSize(); i++) randomPath[i]=-1;
 
-        if(randomSolutionCost<minPathCost){
+        if(randomSolutionCost < minPathCost){
             minPathCost = randomSolutionCost;
             minPath = randomPath;
         }

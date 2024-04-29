@@ -1,0 +1,9 @@
+#ifndef TRAVELING_SALESMAN_PROBLEM_TIMECOUNTER_H
+#define TRAVELING_SALESMAN_PROBLEM_TIMECOUNTER_H
+
+class timeCounter {
+public:
+    long long int read_QPC();
+};
+
+#endif //TRAVELING_SALESMAN_PROBLEM_TIMECOUNTER_H

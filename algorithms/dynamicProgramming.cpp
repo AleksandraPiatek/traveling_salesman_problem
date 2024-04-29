@@ -3,9 +3,6 @@
 #include "dynamicProgramming.h"
 #include "iostream"
 
-int mSize;
-int **nextVertexMatrix;
-int **atspResults;
 void dynamicProgramming::dynamicProgrammingAlgorithm(costMatrix matrix) {
     mSize = matrix.getSize();
     nextVertexMatrix = new int*[mSize];          //allocating memory space for nextVertexMatrix and atspResults

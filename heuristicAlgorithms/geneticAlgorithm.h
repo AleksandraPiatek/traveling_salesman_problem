@@ -5,6 +5,12 @@
 #include "../tools/costMatrix.h"
 
 class geneticAlgorithm {
+    int minCost;
+    long long int minCostFoundTime;
+    int *tempMinPath;
+    int **population;
+    int populationSize;
+    int *parentsIndexes;
 public:
     void geneticAlgorithmExecution(int stopCondition, costMatrix matrix, float crossoverFactor, float mutationFactor, char mutationMethod, std::string fileName);
     void populationRandomizer(int matrixSize, costMatrix);

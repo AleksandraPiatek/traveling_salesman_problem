@@ -1,19 +1,11 @@
 #include <iostream>
 #include <climits>
-#include <iomanip>
 #include "bruteForce.h"
-
-int minPathCost, temporaryMinPathCost;
-int *path, *temporaryPath;
-int pathSize, temporaryPathSize;
-bool *visitedVertices;
-int matrixSize;
-
 
 void bruteForce::bruteForceAlgorithm(costMatrix matrix){
     matrixSize = matrix.getSize();
 
-    minPathCost = INT_MAX;
+    minCost = INT_MAX;
     temporaryMinPathCost = 0;
 
     temporaryPath = new int[matrixSize];
@@ -31,7 +23,7 @@ void bruteForce::bruteForceAlgorithm(costMatrix matrix){
         std::cout << "No path" << std::endl;
     }
     else {
-        std::cout << minPathCost << std::endl;
+        std::cout << minCost << std::endl;
         for(int i=0; i<pathSize; i++){
             std::cout << path[i] << " -> ";
         }
@@ -51,8 +43,8 @@ void bruteForce::atsp(int vertex, costMatrix matrix) {
     if(temporaryPathSize==matrixSize){
         if(matrix.getCost(vertex, 0) != -1) {
             temporaryMinPathCost += matrix.getCost(vertex, 0);
-            if (temporaryMinPathCost < minPathCost) {
-                minPathCost = temporaryMinPathCost;
+            if (temporaryMinPathCost < minCost) {
+                minCost = temporaryMinPathCost;
                 for(int j = 0; j<temporaryPathSize; j++){
                     path[j] = temporaryPath[j];
                 }
@@ -67,7 +59,7 @@ void bruteForce::atsp(int vertex, costMatrix matrix) {
             if (matrix.getCost(vertex, i) != -1) {
                 if (!visitedVertices[i]) {
                     temporaryMinPathCost += matrix.getCost(vertex, i);
-                    if(temporaryMinPathCost<minPathCost) atsp(i, matrix);
+                    if(temporaryMinPathCost < minCost) atsp(i, matrix);
                     temporaryMinPathCost -= matrix.getCost(vertex, i);
                 }
             }
@@ -77,5 +69,3 @@ void bruteForce::atsp(int vertex, costMatrix matrix) {
     temporaryPathSize--;
     temporaryPath[temporaryPathSize] = -1;
 }
-
-

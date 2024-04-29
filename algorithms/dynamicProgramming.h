@@ -4,6 +4,9 @@
 #include "../tools/costMatrix.h"
 
 class dynamicProgramming {
+    int mSize;
+    int **nextVertexMatrix;
+    int **atspResults;
     int atsp(int, int, costMatrix);
 
 public:

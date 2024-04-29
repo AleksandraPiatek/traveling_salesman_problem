@@ -4,8 +4,8 @@ project(traveling_salesman_problem)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(traveling_salesman_problem application.cpp
-        tools/fileReader.cpp
-        tools/fileReader.h
+        tools/smallFilesReader.cpp
+        tools/smallFilesReader.h
         tools/costMatrix.cpp
         tools/costMatrix.h
         algorithms/greedyApproach.cpp
@@ -17,4 +17,9 @@ add_executable(traveling_salesman_problem application.cpp
         heuristicAlgorithms/simulatedAnnealing.cpp
         heuristicAlgorithms/simulatedAnnealing.h
         heuristicAlgorithms/geneticAlgorithm.cpp
-        heuristicAlgorithms/geneticAlgorithm.h)
+        heuristicAlgorithms/geneticAlgorithm.h
+        tools/costMatrix.cpp
+        tools/bigFilesReader.cpp
+        tools/bigFilesReader.h
+        tools/timeCounter.cpp
+        tools/timeCounter.h)
