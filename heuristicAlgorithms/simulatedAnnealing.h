@@ -6,12 +6,13 @@
 
 class simulatedAnnealing {
     greedyApproach greedyApproach;
-    int *minPath;
-    int minPathCost;
-    double temperature;
+    int *currentPath, *minPath;
+    int currentPathCost, minPathCost = INT_MAX;
+    float temperature;
 public:
-    void simulatedAnnealingAlgorithm(costMatrix matrix, int stopCondition);
+    int * simulatedAnnealingAlgorithm(costMatrix matrix, int stopCondition, float inputA);
     double computeProbability(int, int);
+    int computeCost(int *path, costMatrix matrix);
 };
 
 

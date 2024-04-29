@@ -66,9 +66,16 @@ void geneticAlgorithm::geneticAlgorithmExecution(int stopCondition, costMatrix m
         if (calculateCost(findBestFromPopulation(matrix), matrix) < minCost) {
             minCost = calculateCost(findBestFromPopulation(matrix), matrix);
             minCostFoundTime = 1000 * (timeCounter.read_QPC() - start) / frequency;
-            std::cout << minCost << " " << minCostFoundTime << std::endl;
         }
     }
+    std::cout << "Result: " << minCost  << std::endl;
+    std::cout << "Path: "  << std::endl;
+    int index = findBestFromPopulation(matrix);
+    for(int i = 0; i< matrix.getSize(); i++){
+        std::cout << population[index][i] << " ";
+    }
+    std::cout << std::endl;
+
     delete[] parentsIndexes;
     for( int i = 0; i< populationSize; i++){
         delete[] population[i];

@@ -23,7 +23,10 @@ void bruteForce::bruteForceAlgorithm(costMatrix matrix){
         std::cout << "No path" << std::endl;
     }
     else {
+        std::cout << "Result:" << std::endl;
         std::cout << minCost << std::endl;
+        std::cout << "Path: " << std:: endl;
+
         for(int i=0; i<pathSize; i++){
             std::cout << path[i] << " -> ";
         }

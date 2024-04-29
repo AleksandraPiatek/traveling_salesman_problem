@@ -6,6 +6,7 @@
 using namespace std;
 
 class smallFilesReader {
+public:
     costMatrix read(const std::string& fileName);
 };
 

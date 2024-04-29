@@ -5,8 +5,9 @@
 #include "costMatrix.h"
 
 class bigFilesReader {
-    costMatrix readMatrixFile(std::string fileName);
 
+public:
+    costMatrix readMatrixFile(std::string fileName);
 };
 
 

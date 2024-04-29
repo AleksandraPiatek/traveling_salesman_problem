@@ -3,52 +3,115 @@
 #include <windows.h>
 #include <iomanip>
 #include <random>
+#include <cmath>
 
-void simulatedAnnealing::simulatedAnnealingAlgorithm(costMatrix matrix, int stopCondition){
+int * simulatedAnnealing::simulatedAnnealingAlgorithm(costMatrix matrix, int stopCondition, float inputA){
     timeCounter timeCounter;
+
+    minPathCost = INT_MAX;
     long long int frequency, start, elapsed;
-    QueryPerformanceFrequency((LARGE_INTEGER *)&frequency);
-    start = timeCounter.read_QPC();
+
     int *temporaryTable;
-    temporaryTable = greedyApproach.greedyApproachAlgorithm(matrix.getSize(), matrix);
-    minPathCost = temporaryTable[matrix.getSize()];
+    int firstVertexValue, secondVertexValue;
+
+    currentPath = new int[matrix.getSize()];
     minPath = new int[matrix.getSize()];
-    for (int i = 0; i < matrix.getSize(); i++) minPath[i] = temporaryTable[i];
-    delete[] temporaryTable;
-    temperature = 45.0*matrix.getSize();
-    float a = 0.99;
 
-    while(((elapsed = (timeCounter.read_QPC()-start)/frequency)<stopCondition) || temperature==0)  {
-        //generate random solution
-        int randomSolutionCost= INT_MAX;
-        int* randomPath = new int[matrix.getSize()];
-        for(int i=0; i<matrix.getSize(); i++) randomPath[i]=-1;
+    int firstIndexToSwap, secondIndexToSwap;
+    int randomSolutionCost;
 
-        if(randomSolutionCost < minPathCost){
-            minPathCost = randomSolutionCost;
-            minPath = randomPath;
-        }
-        else{
-            double randomNumber;
-            static std::random_device rd;
-            static std::mt19937 gen(rd());
-            std::uniform_real_distribution<> dist(0, 1);
-            randomNumber = dist(gen);
-            if(randomNumber<=computeProbability(randomSolutionCost, minPathCost)){
-                minPathCost = randomSolutionCost;
-                minPath = randomPath;
-            }
-        }
-        temperature = a*temperature;
-        delete[] randomPath;
+    float a = inputA;
+    if(inputA ==0) {
+        a = 0.9999795;
+        if (matrix.getSize() == 48) a = 0.99999835;
+        else if (matrix.getSize() == 171) a = 0.999993;
     }
 
-    std::cout << "Time [s] = " << std::fixed << std::setprecision(3) << (float)elapsed << std::endl;
-    std::cout << "Time [ms] = " << std::setprecision(0) << (1000.0 * elapsed)  << std::endl;
-    std::cout << "Time [us] = " << std::setprecision(0) << (1000000.0 * elapsed) << std::endl;
+    std::vector<int>changeOfTemp;
+    std::vector<long long int>timeOfChangeOfTemp;
 
+    QueryPerformanceFrequency((LARGE_INTEGER *)&frequency);
+    start = timeCounter.read_QPC();
+
+    temporaryTable = greedyApproach.greedyApproachAlgorithm(matrix.getSize(), matrix);
+    currentPathCost = temporaryTable[matrix.getSize()];
+    for (int i = 0; i < matrix.getSize(); i++) {
+        currentPath[i] = temporaryTable[i];
+        minPath[i] = temporaryTable[i];
+    }
+    delete[] temporaryTable;
+    temperature = 30.0*matrix.getSize();
+
+    while(((elapsed = (timeCounter.read_QPC()-start)/frequency)<stopCondition)){
+        if(temperature == 0) break;
+        for(int k = 0; k<matrix.getSize(); k++) {
+            int *randomPath = new int[matrix.getSize()];
+            for (int i = 0; i < matrix.getSize(); i++) randomPath[i] = currentPath[i];
+
+            static std::random_device rd;
+            static std::mt19937 gen(rd());
+            std::uniform_int_distribution<> dist(0, matrix.getSize() - 1);
+            firstIndexToSwap = dist(gen);
+            secondIndexToSwap = dist(gen);
+
+            while (firstIndexToSwap == secondIndexToSwap) {
+                firstIndexToSwap = dist(gen);
+                secondIndexToSwap = dist(gen);
+            }
+
+            firstVertexValue = randomPath[firstIndexToSwap];
+            secondVertexValue = randomPath[secondIndexToSwap];
+            randomPath[firstIndexToSwap] = secondVertexValue;
+            randomPath[secondIndexToSwap] = firstVertexValue;
+
+            randomSolutionCost = computeCost(randomPath, matrix);
+
+            if (randomSolutionCost < currentPathCost) {
+                currentPathCost = randomSolutionCost;
+                for (int j = 0; j < matrix.getSize(); j++) currentPath[j] = randomPath[j];
+                if(randomSolutionCost< minPathCost){
+                    minPathCost = randomSolutionCost;
+                    for (int j = 0; j < matrix.getSize(); j++) minPath[j] = randomPath[j];
+                }
+            } else {
+                double randomNumber;
+                static std::random_device rd;
+                static std::mt19937 gen(rd());
+                static std::uniform_real_distribution<> dist(0, 1);
+                randomNumber = dist(gen);
+                if (randomNumber <= computeProbability(randomSolutionCost, currentPathCost)) {
+                    currentPathCost = randomSolutionCost;
+                    for (int j = 0; j < matrix.getSize(); j++) currentPath[j] = randomPath[j];
+
+                } else {
+                    randomSolutionCost = currentPathCost;
+                    for (int j = 0; j < matrix.getSize(); j++) randomPath[j] = currentPath[j];
+                }
+            }
+            delete[] randomPath;
+        }
+        temperature = a*temperature;
+    }
+    std::cout << "Cost: " << minPathCost << std::endl;
+
+    std::cout << "Path: " << std::endl;
+    for(int i=0; i<matrix.getSize(); i++) std:: cout << minPath[i] << " ";
+    std::cout << minPath[0];
+    std::cout  <<std::endl;
+
+    delete[] currentPath;
+    return minPath;
 }
 
-double simulatedAnnealing::computeProbability(int newCost, int oldCost ) {
-    return exp(-(newCost-oldCost)/temperature);
+double simulatedAnnealing::computeProbability(int newCost, int oldCost) {
+    return exp((oldCost-newCost)/temperature);
+}
+
+int simulatedAnnealing::computeCost(int* path, costMatrix matrix) {
+    int cost=0;
+    for(int i=0;i<matrix.getSize()-1; i++){
+        cost+=(matrix.getCost(path[i], path[i+1]));
+    }
+    cost+=(matrix.getCost(path[matrix.getSize()-1], path[0]));
+    return cost;
 }

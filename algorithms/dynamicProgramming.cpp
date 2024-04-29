@@ -15,7 +15,7 @@ void dynamicProgramming::dynamicProgrammingAlgorithm(costMatrix matrix) {
             atspResults[i][j]= -1;
         }
     }
-
+    std::cout << "Result:" << std::endl;
     std::cout <<  atsp(0, 1, matrix) <<std::endl;
 
     int* path = new int[mSize];
@@ -27,6 +27,7 @@ void dynamicProgramming::dynamicProgrammingAlgorithm(costMatrix matrix) {
         currentMask = currentMask | (1 << currentVertex);
     } while(currentVertex != -1);
 
+    std::cout << "Path:" << std::endl;
     for(int i=0; i<mSize; i++) {              //printing the minimum cost path
         std::cout << path[i] << " -> ";
     }

@@ -1,5 +1,4 @@
 #include "greedyApproach.h"
-#include <random>
 #include <iostream>
 
 int* greedyApproach::greedyApproachAlgorithm(int amountOfVertices, costMatrix matrix) {
@@ -8,13 +7,11 @@ int* greedyApproach::greedyApproachAlgorithm(int amountOfVertices, costMatrix ma
     for(int i=0; i<amountOfVertices; i++) visitedVertices[i] = false;
     int *results = new int[amountOfVertices+1];
     for(int i=0; i<amountOfVertices+1; i++) results[i] = -1;
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(0, amountOfVertices-1);   //randomizing data in range (25,100)
-    currentVertex = dist(gen);
+
+    currentVertex = 0;
     results[0]= currentVertex;
-    std::cout << currentVertex << std::endl;
     visitedVertices[currentVertex] = true;
+
     int minValue, minVertex;
     for(int i=0; i<amountOfVertices-1; i++){
         minValue = INT_MAX;
@@ -32,8 +29,8 @@ int* greedyApproach::greedyApproachAlgorithm(int amountOfVertices, costMatrix ma
         pathCost+=minValue;
         visitedVertices[minVertex] = true;
     }
-    results[amountOfVertices] = pathCost;
-    for(int i=0; i<amountOfVertices+1; i++) std::cout <<results[i] << " ";
 
+    pathCost+=matrix.getCost(currentVertex, results[0]);
+    results[amountOfVertices] = pathCost;
     return results;
 }

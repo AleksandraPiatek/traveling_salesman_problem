@@ -2,21 +2,19 @@
 #include <fstream>
 
 costMatrix bigFilesReader::readMatrixFile(std::string fileName) {
-    int maxLinesToSkip = 9;
-    if(fileName == "rbg403.atsp") maxLinesToSkip = 10;
-    std::fstream file(fileName);
+    std::string pathName = "../files/" + fileName;
+    std::fstream file(pathName);
     if(file.is_open()) {
         int size, data;
         std::string temporary;
-        for(int i = 0; i < maxLinesToSkip; i++)
-            std::getline(file, temporary);
+        int max = 9;
+        if( fileName == "rbg403.atsp") max = 10;
+        for(int i =0; i<max; i++) file >> temporary;
 
         file >> size;
         costMatrix newMatrix(size);
 
-        for(int i = 0; i < 5; i++)
-            file >> temporary;
-
+        for(int i=0; i<5; i++) file >> temporary;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 file >> data;
@@ -26,5 +24,5 @@ costMatrix bigFilesReader::readMatrixFile(std::string fileName) {
         file.close();
         return newMatrix;
     }
-    return costMatrix();
+    return *new costMatrix;
 }

@@ -2,7 +2,8 @@
 #include <fstream>
 
 costMatrix smallFilesReader::read(const std::string& fileName) {
-    std::fstream file(fileName);
+    string filePath = "../files/" + fileName;
+    std::fstream file(filePath);
     if(file.is_open()) {
         int size;
         file >> size;                                // reading the first line with amount of cities
